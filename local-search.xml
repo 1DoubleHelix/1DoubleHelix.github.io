@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>让 Firefox 像 Edge 一样平滑滚动</title>
+    <link href="/firefox-smooth-scroll.html"/>
+    <url>/firefox-smooth-scroll.html</url>
+    
+    <content type="html"><![CDATA[<p class="note note-info">在浏览某些页面时，可能会造成卡顿，例如 Youtube，可以自行将网址加入黑名单或者更换浏览器访问</p><ol><li>Firefox 是我的主力浏览器，虽然默认的平滑滚动还可以，但是比起 Edge 还是差了一截</li><li>以下参数通过同屏对比，尽量模仿了 Edge 的平滑滚动，供大家参考</li><li>请安装<a href="https://www.mozilla.org/zh-CN/firefox/browsers/">原版 Firefox</a>，拒绝特供版</li></ol><h3 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h3><p>安装插件 <a href="https://addons.mozilla.org/zh-CN/firefox/addon/yass-we/">Yet Another Smooth Scrolling WE</a></p><p>​<img src="/firefox-smooth-scroll/image-20231101224737-6q3nmd5.png" alt="image" title="插件页面">​</p><h3 id="调整参数"><a href="#调整参数" class="headerlink" title="调整参数"></a>调整参数</h3><p>鼠标滚轮的参数如下，需要关闭加速</p><p>​<img src="/firefox-smooth-scroll/image-20231101103135-m2wra3m.png" alt="image" title="设置鼠标滚轮"></p><p>首选项的设置如下，请按个人喜好设置，这里关闭了上下边缘回弹</p><p>​<img src="/firefox-smooth-scroll/image-20231101103138-qzgb2lp.png" alt="image" title="设置首选项"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>信息技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>教程</tag>
+      
+      <tag>浏览器</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>闪光灯镍氢电池与充电器推荐</title>
     <link href="/Ni-MH-battery.html"/>
     <url>/Ni-MH-battery.html</url>
