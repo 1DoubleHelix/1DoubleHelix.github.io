@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>使用 Clover 引导 NVMe 硬盘</title>
+    <link href="/clover-boot-nvme.html"/>
+    <url>/clover-boot-nvme.html</url>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在某些不支持引导 NVMe 硬盘的主板上，可以使用 Clover 启动 NVMe 硬盘中的系统，以下操作以 Clover 5152 版本为例</p><p><img src="/clover-boot-nvme/image.png" alt="安装在 PCIe 转接卡上的 NVMe 硬盘" title="安装在 PCIe 转接卡上的 NVMe 硬盘"></p><h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><ol><li>准备一个 U 盘或者 SATA 硬盘作为启动盘</li><li><a href="https://github.com/CloverHackyColor/CloverBootloader/releases/tag/5152">下载 Clover 5152</a></li><li>复制 off 目录中的 <code>NvmExpressDxe.efi</code> 到 BIOS 和 UEFI 目录中</li><li>将 EFI 文件夹放置在现有的 EFI 分区中即可使用</li><li>完成后的目录树如下</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">Clover5152<br>├── EFI<br>│   ├── BOOT<br>│   └── CLOVER<br>│       └── drivers<br>│           ├── BIOS<br>│           │   └── NvmExpressDxe.efi<br>│           ├── off<br>│           │   └── NvmExpressDxe.efi <span class="hljs-comment"># 源文件</span><br>│           └── UEFI<br>│               └── NvmExpressDxe.efi<br>└── usr<br></code></pre></td></tr></table></figure><h2 id="启动系统"><a href="#启动系统" class="headerlink" title="启动系统"></a>启动系统</h2><ul><li>如果是 UEFI 主板，应该可以识别到 Clover 启动项</li><li>否则，请使用 PE 中的工具修改主板启动项</li><li>引导成功后按照正常的方法安装系统即可</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>信息技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>教程</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>让 Firefox 像 Edge 一样平滑滚动</title>
     <link href="/firefox-smooth-scroll.html"/>
     <url>/firefox-smooth-scroll.html</url>
