@@ -4,12 +4,45 @@
   
   
   <entry>
+    <title>Padavan 实现内网观看广东移动 IPTV（附 m3u 制作方法）</title>
+    <link href="/padavan-cmcc-iptv.html"/>
+    <url>/padavan-cmcc-iptv.html</url>
+    
+    <content type="html"><![CDATA[<h2 id="获取和制作-m3u"><a href="#获取和制作-m3u" class="headerlink" title="获取和制作 m3u"></a>获取和制作 m3u</h2><h3 id="获取-IPTV-的-json-文件"><a href="#获取-IPTV-的-json-文件" class="headerlink" title="获取 IPTV 的 json 文件"></a>获取 IPTV 的 json 文件</h3><ol><li>将电脑连接到光猫的 IPTV 端口</li><li>打开浏览器，访问 <a href="http://183.235.16.92:8082/epg/api/custom/getAllChannel.json">http://183.235.16.92:8082/epg/api/custom/getAllChannel.json</a></li><li>保存 json 为 <code>getAllChannel.json</code>​</li></ol><h3 id="制作-m3u-文件"><a href="#制作-m3u-文件" class="headerlink" title="制作 m3u 文件"></a>制作 m3u 文件</h3><ol><li>将 <code>getAllChannel.json</code>​ 放到和脚本相同的目录下</li><li>直接运行 <code>iptv2m3u.js</code>​ 即可生成 <code>IPTV.m3u</code>​</li><li>以下是代码，也可以前往我的 Github 项目 <a href="https://github.com/1DoubleHelix/020-CMCC-IPTV">020-CMCC-IPTV</a> 获取，欢迎 star</li><li>脚本按 Padavan 的默认地址，如果你有其他的地址和端口，请修改 <code>localRTP</code>​</li></ol><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// iptv2m3u.js</span><br><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);<br><span class="hljs-keyword">const</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./getAllChannel.json&#x27;</span>);<br><br><span class="hljs-comment">// 本地 rtp 服务的地址和端口</span><br><span class="hljs-keyword">let</span> localRTP = <span class="hljs-string">&#x27;http://192.168.123.1:60000/rtp/&#x27;</span><br>fs.<span class="hljs-title function_">appendFileSync</span>(<span class="hljs-string">&#x27;IPTV.m3u&#x27;</span>, <span class="hljs-string">`#EXTM3U\n`</span>)<br><br><span class="hljs-comment">// 遍历 json 文件</span><br>data.<span class="hljs-property">channels</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">channel</span> =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> icon = channel.<span class="hljs-property">icon</span><br>    <span class="hljs-keyword">const</span> title = channel.<span class="hljs-property">title</span>;<br>    <span class="hljs-keyword">const</span> hwurl = channel.<span class="hljs-property">params</span>.<span class="hljs-property">hwurl</span>;<br>    <span class="hljs-comment">// 只保留 url 后面的 IP</span><br>    <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">IP</span> = hwurl.<span class="hljs-title function_">substring</span>(hwurl.<span class="hljs-title function_">indexOf</span>(<span class="hljs-string">&#x27;rtp://&#x27;</span>) + <span class="hljs-number">6</span>);<br>    fs.<span class="hljs-title function_">appendFileSync</span>(<span class="hljs-string">&#x27;IPTV.m3u&#x27;</span>, <span class="hljs-string">&#x27;#EXTINF:-1 tvg-name&quot;&#x27;</span> + title + <span class="hljs-string">&#x27;&quot; tvg-logo=&quot;&#x27;</span> + icon + <span class="hljs-string">&#x27;&quot;,&#x27;</span> + <span class="hljs-string">`<span class="hljs-subst">$&#123;title&#125;</span>\n`</span> + localRTP + <span class="hljs-string">`<span class="hljs-subst">$&#123;IP&#125;</span>\n`</span>)<br>&#125;);<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;提取完成&#x27;</span>);<br></code></pre></td></tr></table></figure><h2 id="连接和配置设备"><a href="#连接和配置设备" class="headerlink" title="连接和配置设备"></a>连接和配置设备</h2><p>本教程并没有单线复用，一条网线解决不了的事情，那就两条！</p><h3 id="连接网线"><a href="#连接网线" class="headerlink" title="连接网线"></a>连接网线</h3><p>​<img src="/padavan-cmcc-iptv/drawio-20240326232011-2qivvn0.png" alt="drawio" title="网络拓扑图">​</p><h3 id="配置-Padavan"><a href="#配置-Padavan" class="headerlink" title="配置 Padavan"></a>配置 Padavan</h3><ul><li>配置外部网络 (WAN)→ 外网设置 → 端口隔离和 VLAN 过滤，IPTV 的网线插在哪个 LAN 口就选择哪个，我这里是 LAN1，VID 选择 48，其他的按图选择</li></ul><p>​<img src="/padavan-cmcc-iptv/image-20240326232230-0hx8w0p.png" alt="image" title="外部网络 (WAN)→外网设置→端口隔离和 VLAN 过滤">​</p><ul><li>配置内部网络 (LAN)→IPTV，按图配置即可，内网的 rtp 地址就是 Padavan 路由器的内网 IP，这里 UDP 代理 (Udpxy) 选择 60000，拼接起来就是 <a href="http://192.168.123.1:60000/">http://192.168.123.1:60000</a></li><li>如果有不一样的配置，请修改脚本中的 <code>localRTP</code>​</li></ul><p>​<img src="/padavan-cmcc-iptv/image-20240326232558-jieaqe2.png" alt="image" title="内部网络 (LAN)→IPTV">​</p><h2 id="播放"><a href="#播放" class="headerlink" title="播放"></a>播放</h2><p>使用 VLC 或者 PotPlayer 打开 IPTV.m3u 即可</p><p>参考教程：<a href="https://www.right.com.cn/forum/thread-4035624-1-1.html">iptv 局域网共享成功！k2p+ 灯大老毛子 padavan 实现 iptv 组播双网融合内网</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>信息技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>教程</tag>
+      
+      <tag>路由器</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>使用 yt-dlp 下载和转载 Youtube 视频</title>
     <link href="/download-by-yt-dlp.html"/>
     <url>/download-by-yt-dlp.html</url>
     
     <content type="html"><![CDATA[<p class="note note-danger">本文是快速教程，不是保姆级教程，需要一定基础知识</p><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ul><li>下载使用 <a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a>，转码使用 <a href="https://github.com/yt-dlp/yt-dlp">ffmpeg</a>，但转码是可选的，目前 Bilibili 支持投稿 webm 格式</li><li>以上两个软件均为开源跨平台，请自行检索安装和使用的方法</li><li>需要保证网络环境畅通</li></ul><h2 id="下载和转换"><a href="#下载和转换" class="headerlink" title="下载和转换"></a>下载和转换</h2><h3 id="yt-dlp"><a href="#yt-dlp" class="headerlink" title="yt-dlp"></a>yt-dlp</h3><ul><li>直接使用链接下载，yt-dlp 默认下载最高质量的音视频，并自动合并音视频流</li><li>这里以 <a href="https://www.youtube.com/watch?v=XCs7FacjHQY">fhána - 愛のシュプリーム！(TVアニメ『小林さんちのメイドラゴンS』OP主題歌) - Official Music Video</a> 为例</li></ul><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 直接下载</span><br>yt-dlp https://www.youtube.com/watch?v=XCs7FacjHQY<br><span class="hljs-comment"># 更多参数</span><br>yt-dlp --<span class="hljs-built_in">help</span><br></code></pre></td></tr></table></figure><p>​<img src="/download-by-yt-dlp/image-20240324132802-63rjum9.png" alt="image" title="YouTube 播放信息">​</p><p>​<img src="/download-by-yt-dlp/image-20240324133016-j0sf7am.png" alt="image" title="下载文件的 MediaInfo">​</p><h3 id="ffmpeg"><a href="#ffmpeg" class="headerlink" title="ffmpeg"></a>ffmpeg</h3><p>如果下载回来的文件是 webm，一般是 VP9 + Opus，如果有需要可以使用 ffmpeg 转码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 转码为 mp4</span><br>ffmpeg -i sample.webm sample.mp4<br></code></pre></td></tr></table></figure><h2 id="转载"><a href="#转载" class="headerlink" title="转载"></a>转载</h2><ul><li>请尊重作者的劳动成果，转载时务必附上原视频作者的链接！</li><li>如果接到作者的请求，请配合下架转载的视频</li></ul>]]></content>
     
+    
+    <categories>
+      
+      <category>信息技术</category>
+      
+    </categories>
     
     
     <tags>
