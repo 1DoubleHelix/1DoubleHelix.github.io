@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>使用 Docker 部署 Tailscale</title>
+    <link href="/docker-tailscale.html"/>
+    <url>/docker-tailscale.html</url>
+    
+    <content type="html"><![CDATA[<p>参考教程：<a href="https://wiki.slarker.me/fnos/tailscale.html">方便、安全远程访问 fnOS - Tailscale</a></p><p>我的需求如下，如果你的想法和我类似，本篇文章才有参考价值</p><ul><li>使用 Docker 部署，通用性好，对系统的改动最小</li><li>尽量不折腾运营商网关</li><li>自带加密，无需额外配置防火墙</li></ul><h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol><li>本教程适用的系统包括但不限于 FnOS（飞牛）、CasaOS、UGOS（绿联）等带有 Docker 管理面板的 Linux 系统</li><li>选择 Tailscale 还是 ZeroTier 请参考<a href="https://space.bilibili.com/472755599">韩风Talk</a> 的视频：<a href="https://www.bilibili.com/video/BV13P411q7Cy/">能与ZeroTier齐名的内网穿透工具Tailscale，比ZeroTier还好用？</a></li><li>其他 Linux 系统，请参考 Docker 入门教程进行部署，需要自行使用命令行实现</li></ol><h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><h3 id="获取-Auth-key"><a href="#获取-Auth-key" class="headerlink" title="获取 Auth key"></a>获取 Auth key</h3><ol><li>打开 <a href="https://tailscale.com/">Tailscale</a> 网站，点击右上角的 <code>Get started</code>​ 注册登录，我使用 Github 登录</li><li>在 <code>Machines</code>​ → <code>Add device</code>​ → <code>Linux Server</code>​ → <code>Generate install script</code>​，复制 <code>--auth-key=</code>​ 后面的部分</li></ol><p>​<img src="/docker-tailscale/image-20241010212725-0x343gx.png" alt="image" title="Auth key">​</p><h3 id="安装-Tailscale（以飞牛-OS-为例）"><a href="#安装-Tailscale（以飞牛-OS-为例）" class="headerlink" title="安装 Tailscale（以飞牛 OS 为例）"></a>安装 Tailscale（以飞牛 OS 为例）</h3><ol><li><p>在 Docker 应用中选择 Compose → 新增项目</p></li><li><p>路径选择 docker&#x2F;tailscale，没有就新建<br>​<img src="/docker-tailscale/image-20241010213210-c55tlid.png" alt="image" title="选择路径">​</p></li><li><p>选择 <code>创建 docker-compose.yml</code>​ 粘贴以下内容，按注释修改，其中 <code>TS_ROUTES</code>​ 配置好后可以在外网访问该网段下的主机，只需要使用局域网地址</p> <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;3.7&#x27;</span><br><span class="hljs-attr">services:</span><br>    <span class="hljs-attr">tailscale:</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">tailscale</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">/vol1/1000/docker/tailscale/var/lib:/var/lib</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">/vol1/1000/docker/tailscale/dev/net/tun:/dev/net/tun</span><br>        <span class="hljs-attr">network_mode:</span> <span class="hljs-string">host</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span><br>        <span class="hljs-attr">environment:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">TS_AUTHKEY=</span>    <span class="hljs-comment">#填写第一步生成的 Auth key</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">TS_EXTRA_ARGS=--advertise-exit-node</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">TS_ROUTES=192.168.1.0/24</span> <span class="hljs-comment">#修改为主机所在的网段</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">TS_HOSTNAME=</span>    <span class="hljs-comment">#填写主机名 例如 FnOS</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">TS_STATE_DIR=./state/</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">tailscale/tailscale</span><br></code></pre></td></tr></table></figure></li><li><p>勾选创建项目后立即启动，点击完成</p></li></ol><h3 id="授权网段"><a href="#授权网段" class="headerlink" title="授权网段"></a>授权网段</h3><ol><li>打开 <a href="https://tailscale.com/">Tailscale</a> 网站，点击设备名称</li><li>点击 Awaiting Approval 下面的 <code>Edit</code>​</li><li>勾选自己的网段，点击 <code>save</code>​ 即可</li></ol><p>​<img src="/docker-tailscale/image-20241010215318-b26g4no.png" alt="image" title="授权网段">​</p><h3 id="Exit-node（可选）"><a href="#Exit-node（可选）" class="headerlink" title="Exit node（可选）"></a>Exit node（可选）</h3><ul><li>在不了解这个功能的情况下，不建议启用</li><li>启用后其他 Tailscale 节点将通过你配置的网段接入网络</li><li>简单来说，就是通过家里的宽带上网</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>信息技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>教程</tag>
+      
+      <tag>NAS</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Padavan 实现内网观看广东移动 IPTV（附 m3u 制作方法）</title>
     <link href="/padavan-cmcc-iptv.html"/>
     <url>/padavan-cmcc-iptv.html</url>
